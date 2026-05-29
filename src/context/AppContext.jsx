@@ -1,25 +1,19 @@
 import { createContext, useState, useCallback, useContext, useMemo } from "react";
-import { SEED_USERS, SEED_POSTS, SEED_CHAT, MOODS, formatTime, nowTime, CHAT_AUTO_REPLIES } from "../data.js";
+import { SEED_USERS, SEED_POSTS, SEED_CHAT, MOODS, formatTime, nowTime } from "../data.js";
 
 export const AppContext = createContext();
-
-// seed: nova, kit, pearl all "follow" you back by default so you have some friends on first load
-const SEED_FOLLOWERS = new Set(["nova","kit","pearl"]);
 
 export function AppProvider({ children, initialProfile }) {
   const [tab, setTab]                   = useState("home");
   const [posts, setPosts]               = useState(SEED_POSTS);
   const [chatMessages, setChatMessages] = useState(SEED_CHAT);
-  // friendGroupchats: { id, name, members:[userId], messages:[{id,userId,text,time}] }
   const [friendChats, setFriendChats]   = useState([]);
-  const [activeFriendChat, setActiveFriendChat] = useState(null); // id of open DM/group
+  const [activeFriendChat, setActiveFriendChat] = useState(null);
   const [profileModal, setProfileModal] = useState(null);
   const [likedPosts, setLikedPosts]     = useState(new Set());
   const [boostedPosts, setBoostedPosts] = useState(new Set());
-  // following = people YOU follow
   const [following, setFollowing]       = useState(new Set());
-  // followers = people who follow YOU (seeded so you have friends right away)
-  const [followers, setFollowers]       = useState(SEED_FOLLOWERS);
+  const [followers, setFollowers]       = useState(new Set());
 
   const defaultProfile = {
     id:"me", name:"you", handle:"@you",
@@ -38,12 +32,12 @@ export function AppProvider({ children, initialProfile }) {
     initialProfile ? { ...defaultProfile, ...initialProfile } : defaultProfile
   );
 
-  const users = SEED_USERS;
+  // no seed/bot users — real users only
+  const [users, setUsers] = useState(SEED_USERS);
   const moods = MOODS;
 
-  // ── DERIVED: friends = mutual follows ──────────────────────────────────────
+  // friends = mutual follows
   const friends = useMemo(() => {
-    // a friend = someone you follow AND who follows you back
     const mutuals = new Set();
     for (const id of following) {
       if (followers.has(id)) mutuals.add(id);
@@ -51,10 +45,9 @@ export function AppProvider({ children, initialProfile }) {
     return mutuals;
   }, [following, followers]);
 
-  // star/follower counts for display
-  const myStarCount    = followers.size;        // people following me
-  const myFollowingCount = following.size;       // people I follow
-  const myFriendCount  = friends.size;
+  const myStarCount     = followers.size;
+  const myFollowingCount = following.size;
+  const myFriendCount   = friends.size;
 
   const getUserById = useCallback(
     id => id === "me" ? myProfile : users.find(u => u.id === id),
@@ -114,91 +107,57 @@ export function AppProvider({ children, initialProfile }) {
     setPosts(prev => prev.filter(p => p.id !== postId));
   }, []);
 
-  // ── CLOUD NINE (global chat) ────────────────────────────────────────────────
+  // ── CLOUD NINE (global live chat — real users only, no auto-replies) ────────
   const sendChat = useCallback(text => {
-    setChatMessages(prev => [...prev, { id:`cm_${Date.now()}`, userId:"me", text, time:nowTime() }]);
-    const repliers = ["nova","pearl","kit","clem","rae","sol"];
-    setTimeout(() => {
-      const r = repliers[Math.floor(Math.random()*repliers.length)];
-      const t = CHAT_AUTO_REPLIES[Math.floor(Math.random()*CHAT_AUTO_REPLIES.length)];
-      setChatMessages(prev => [...prev, { id:`cm_${Date.now()}+1`, userId:r, text:t, time:nowTime() }]);
-    }, 1200 + Math.random()*1800);
+    setChatMessages(prev => [
+      ...prev,
+      { id:`cm_${Date.now()}`, userId:"me", text, time:nowTime() }
+    ]);
   }, []);
 
-  // ── FOLLOW / UNFOLLOW ──────────────────────────────────────────────────────
+  // ── FOLLOW ─────────────────────────────────────────────────────────────────
   const toggleFollow = useCallback(userId => {
     setFollowing(prev => {
       const n = new Set(prev);
       if (n.has(userId)) {
         n.delete(userId);
-        // if they were a friend, remove the friend groupchat too
         setFriendChats(fc => fc.filter(c => !(c.isDM && c.members.includes(userId))));
       } else {
         n.add(userId);
-        // simulate: some users follow back after a short delay
-        const followBackChance = ["nova","kit","pearl","clem"].includes(userId);
-        if (followBackChance) {
-          setTimeout(() => {
-            setFollowers(f => new Set([...f, userId]));
-          }, 1500 + Math.random()*2000);
-        }
       }
       return n;
     });
   }, []);
 
-  // ── FRIEND GROUPCHATS ──────────────────────────────────────────────────────
-  // Create or open a DM with a friend
+  // ── FRIEND CHATS ───────────────────────────────────────────────────────────
   const openFriendDM = useCallback(friendId => {
     setFriendChats(prev => {
       const existing = prev.find(c => c.isDM && c.members.includes(friendId));
-      if (existing) {
-        setActiveFriendChat(existing.id);
-        return prev;
-      }
+      if (existing) { setActiveFriendChat(existing.id); return prev; }
       const newChat = {
-        id: `dm_${friendId}_${Date.now()}`,
-        isDM: true,
-        name: null, // will display friend name
-        members: [friendId],
-        messages: [],
+        id:`dm_${friendId}_${Date.now()}`, isDM:true,
+        name:null, members:[friendId], messages:[],
       };
       setActiveFriendChat(newChat.id);
       return [...prev, newChat];
     });
   }, []);
 
-  // Create a new group chat with selected friends
   const createGroupChat = useCallback((name, memberIds) => {
     const newChat = {
-      id: `gc_${Date.now()}`,
-      isDM: false,
-      name: name || "new group ✦",
-      members: memberIds,
-      messages: [],
+      id:`gc_${Date.now()}`, isDM:false,
+      name: name || "new group ✦", members:memberIds, messages:[],
     };
     setFriendChats(prev => [...prev, newChat]);
     setActiveFriendChat(newChat.id);
   }, []);
 
-  // Send a message in a friend chat
   const sendFriendMessage = useCallback((chatId, text) => {
     const time = nowTime();
-    setFriendChats(prev => prev.map(c => {
-      if (c.id !== chatId) return c;
-      const newMsg = { id:`fm_${Date.now()}`, userId:"me", text, time };
-      // simulate reply from friend after delay
-      const replier = c.members[0];
-      setTimeout(() => {
-        const reply = CHAT_AUTO_REPLIES[Math.floor(Math.random()*CHAT_AUTO_REPLIES.length)];
-        setFriendChats(fc => fc.map(ch =>
-          ch.id === chatId
-            ? { ...ch, messages:[...ch.messages, { id:`fm_${Date.now()}r`, userId:replier, text:reply, time:nowTime() }] }
-            : ch
-        ));
-      }, 1200 + Math.random()*2000);
-      return { ...c, messages:[...c.messages, newMsg] };
-    }));
+    setFriendChats(prev => prev.map(c =>
+      c.id !== chatId ? c
+        : { ...c, messages:[...c.messages, { id:`fm_${Date.now()}`, userId:"me", text, time }] }
+    ));
   }, []);
 
   const leaveFriendChat = useCallback(chatId => {
@@ -206,7 +165,6 @@ export function AppProvider({ children, initialProfile }) {
     setActiveFriendChat(null);
   }, []);
 
-  // ── MY PROFILE ─────────────────────────────────────────────────────────────
   const updateMyProfile = useCallback(updates => {
     setMyProfile(prev => ({ ...prev, ...updates }));
   }, []);

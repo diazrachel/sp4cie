@@ -4,11 +4,11 @@ import PostCard from "./PostCard";
 
 export default function Feed() {
   const { posts, addPost, moods, myProfile } = useApp();
-  const [draft, setDraft]           = useState("");
-  const [selectedMood, setMood]     = useState(moods[0]);
-  const [media, setMedia]           = useState(null);
-  const [mediaType, setMediaType]   = useState(null);
-  const [showMoods, setShowMoods]   = useState(false);
+  const [draft, setDraft]         = useState("");
+  const [selectedMood, setMood]   = useState(moods[0]);
+  const [media, setMedia]         = useState(null);
+  const [mediaType, setMediaType] = useState(null);
+  const [showMoods, setShowMoods] = useState(false);
   const fileRef = useRef(null);
 
   function handleFile(e) {
@@ -21,7 +21,7 @@ export default function Feed() {
 
   function handlePost() {
     if (!draft.trim() && !media) return;
-    addPost({ body: draft.trim(), media, mediaType, mood: selectedMood });
+    addPost({ body:draft.trim(), media, mediaType, mood:selectedMood });
     setDraft(""); setMedia(null); setMediaType(null); setShowMoods(false);
   }
 
@@ -31,10 +31,9 @@ export default function Feed() {
         <div className="section-title">orbit feed ✦</div>
       </div>
 
-      {/* Composer */}
       <div className="composer">
         <div className="composer-top">
-          <div className="composer-avi" style={{ background: myProfile.avatarBg }}>{myProfile.avatar}</div>
+          <div className="composer-avi" style={{ background:myProfile.avatarBg }}>{myProfile.avatar}</div>
           <textarea className="composer-ta"
             placeholder="what's floating through your cosmos? ✦"
             value={draft} onChange={e => setDraft(e.target.value)}
@@ -43,7 +42,7 @@ export default function Feed() {
         </div>
 
         {media && (
-          <div className="composer-media-preview" style={{ marginTop: 10 }}>
+          <div className="composer-media-preview" style={{ marginTop:10 }}>
             {mediaType === "image"
               ? <img src={media} alt="preview" style={{ width:"100%", maxHeight:240, objectFit:"cover", borderRadius:12 }} />
               : <video src={media} controls style={{ width:"100%", maxHeight:240, borderRadius:12 }} />}
@@ -68,8 +67,9 @@ export default function Feed() {
         {showMoods && (
           <div className="mood-selector">
             {moods.map(m => (
-              <button key={m.label} className={`mood-chip ${selectedMood.label === m.label ? "selected" : ""}`}
-                style={{ background: m.bg + "33", color: m.color, borderColor: m.color + "66" }}
+              <button key={m.label}
+                className={`mood-chip ${selectedMood.label === m.label ? "selected" : ""}`}
+                style={{ background:m.bg+"33", color:m.color, borderColor:m.color+"66" }}
                 onClick={() => { setMood(m); setShowMoods(false); }}>
                 {m.label}
               </button>
@@ -78,7 +78,17 @@ export default function Feed() {
         )}
       </div>
 
-      {posts.map(p => <PostCard key={p.id} post={p} />)}
+      {posts.length === 0 ? (
+        <div className="empty-state">
+          <div className="empty-icon">✦</div>
+          <div style={{ fontWeight:700, marginBottom:8 }}>nothing in orbit yet</div>
+          <div style={{ fontSize:13.5, color:"var(--muted)", fontWeight:500 }}>
+            be the first to post something ☁️ or find people to follow in discover 🌌
+          </div>
+        </div>
+      ) : (
+        posts.map(p => <PostCard key={p.id} post={p} />)
+      )}
     </div>
   );
 }

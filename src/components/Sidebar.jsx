@@ -30,15 +30,19 @@ export default function Sidebar() {
         </button>
       ))}
 
-      <div className="nav-sec" style={{ marginTop:12 }}>floating by</div>
-      {users.map(u => (
-        <div key={u.id} className="online-item" onClick={() => setProfileModal(u)}>
-          <div className="online-avi" style={{ background: u.avatarBg }}>{u.avatar}</div>
-          <span>{u.name.split(" ")[0]}</span>
-          {friends?.has(u.id) && <span style={{ fontSize:10, color:"var(--accent)", fontWeight:700 }}>💫</span>}
-          <div className={u.isOnline ? "dot-on" : "dot-off"} />
-        </div>
-      ))}
+      {users.length > 0 && (
+        <>
+          <div className="nav-sec" style={{ marginTop:12 }}>floating by</div>
+          {users.map(u => (
+            <div key={u.id} className="online-item" onClick={() => setProfileModal(u)}>
+              <div className="online-avi" style={{ background:u.avatarBg }}>{u.avatar}</div>
+              <span>{u.name.split(" ")[0]}</span>
+              {friends?.has(u.id) && <span style={{ fontSize:10, color:"var(--accent)", fontWeight:700 }}>💫</span>}
+              <div className={u.isOnline ? "dot-on" : "dot-off"} />
+            </div>
+          ))}
+        </>
+      )}
     </aside>
   );
 }

@@ -736,6 +736,169 @@ html,body,#root{height:100%;background:var(--space);color:var(--text);font-famil
 .vibe-tag{padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:700;background:rgba(255,255,255,.05);color:var(--text2);cursor:pointer;border:1px solid var(--border);transition:all .12s;display:inline-block}
 .vibe-tag:hover{background:rgba(192,132,252,.1);border-color:rgba(192,132,252,.3);color:var(--accent)}
 
-/* responsive */
-@media(max-width:1080px){.app-layout{grid-template-columns:210px 1fr}.right-panel{display:none}}
-@media(max-width:680px){.app-layout{grid-template-columns:1fr}.sidebar{display:none}.main-content{padding:14px 10px}}
+/* ── RESPONSIVE ───────────────────────────────────────── */
+@media(max-width:1080px){
+  .app-layout{grid-template-columns:210px 1fr}
+  .right-panel{display:none}
+}
+
+/* ── MOBILE (≤680px) ───────────────────────────────────── */
+@media(max-width:680px){
+
+  /* layout: single column, sidebar hidden, bottom nav instead */
+  .app-layout{
+    grid-template-columns:1fr;
+    padding-bottom:68px; /* room for bottom nav */
+  }
+  .sidebar{ display:none }
+  .right-panel{ display:none }
+  .main-content{ padding:14px 12px 80px }
+
+  /* logout button — smaller, top-right */
+  body > div > button[style]{
+    top:10px !important;
+    right:10px !important;
+    font-size:11px !important;
+    padding:5px 10px !important;
+  }
+
+  /* ── BOTTOM NAV BAR ─────────────────────────────── */
+  .mobile-nav{
+    position:fixed;bottom:0;left:0;right:0;z-index:100;
+    background:rgba(7,7,26,0.92);
+    backdrop-filter:blur(16px);
+    border-top:1px solid rgba(255,255,255,.08);
+    display:flex;align-items:stretch;height:60px;
+    padding:0 4px;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .mobile-nav-btn{
+    position:relative;
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:3px;border:none;background:transparent;cursor:pointer;
+    color:var(--muted);font-family:'Space Grotesk',sans-serif;
+    font-size:9.5px;font-weight:700;letter-spacing:.3px;
+    padding:6px 2px;border-radius:10px;transition:all .15s;
+    -webkit-tap-highlight-color:transparent;
+    text-transform:uppercase;
+  }
+  .mobile-nav-btn .nav-icon{ font-size:20px;line-height:1 }
+  .mobile-nav-btn.active{ color:var(--accent) }
+  .mobile-nav-btn.active .nav-icon{
+    filter:drop-shadow(0 0 6px rgba(192,132,252,.7));
+  }
+
+  /* hide on desktop */
+  .mobile-nav{ display:flex }
+
+  /* ── AUTH SCREENS ─────────────────────────────────── */
+  .landing-card{
+    padding:36px 24px;
+    border-radius:22px;
+  }
+  .landing-logo{ font-size:42px }
+  .landing-tag{ font-size:14.5px; margin-bottom:28px }
+  .landing-features{ gap:14px }
+  .lf{ font-size:11px }
+
+  .auth-card{
+    padding:32px 20px 26px;
+    border-radius:20px;
+  }
+  .auth-title{ font-size:21px }
+  .auth-sub{ font-size:13px; margin-bottom:20px }
+  .field-input{ font-size:16px; padding:12px 14px } /* 16px prevents iOS zoom */
+
+  .setup-card{
+    padding:26px 18px 22px;
+    border-radius:20px;
+    max-height:95vh;
+  }
+  .setup-avi-grid{ grid-template-columns:repeat(5,1fr) }
+  .setup-banner-grid{ grid-template-columns:repeat(4,1fr) }
+
+  /* ── COMPOSER ─────────────────────────────────────── */
+  .composer{ padding:13px }
+  .composer-ta{ font-size:15px; min-height:52px }
+  .composer-footer{ flex-wrap:wrap; gap:8px }
+  .post-btn{ width:100%; text-align:center }
+
+  /* ── POST CARD ────────────────────────────────────── */
+  .post{ padding:13px 14px }
+  .post-avi{ width:38px; height:38px; font-size:17px }
+  .post-name{ font-size:14px }
+  .post-body{ font-size:14px }
+  .post-actions{ flex-wrap:wrap; gap:5px }
+  .act-btn{ font-size:12px; padding:5px 10px }
+
+  /* ── SECTION HEADER ───────────────────────────────── */
+  .section-header{ margin-bottom:14px; flex-wrap:wrap; gap:6px }
+  .section-title{ font-size:19px }
+
+  /* ── DISCOVER ─────────────────────────────────────── */
+  .discover-grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+  }
+  .disc-name{ font-size:13px }
+  .disc-bio{ display:none } /* hide bio on tiny cards */
+
+  /* ── CLOUD NINE ───────────────────────────────────── */
+  .cloud-nine-shell{ height:calc(100vh - 148px); border-radius:14px }
+  .cloud-nine-header{ padding:11px 14px }
+  .cloud-nine-title{ font-size:16px }
+  .cn-members{ display:none }
+  .cn-bubble{ font-size:13.5px; padding:8px 12px }
+  .cloud-nine-footer{ padding:10px 12px }
+  .cn-input{ font-size:15px; padding:9px 14px } /* prevent iOS zoom */
+
+  /* ── MY MOON ──────────────────────────────────────── */
+  .moon-banner{ height:130px }
+  .moon-avi{ width:72px; height:72px; font-size:32px }
+  .moon-name{ font-size:20px }
+  .moon-stats{ gap:18px; flex-wrap:wrap }
+  .moon-profile-card{ padding:0 16px 18px }
+
+  /* ── PROFILE EDITOR ───────────────────────────────── */
+  .edit-panel{
+    border-radius:20px;
+    max-height:92vh;
+  }
+  .edit-body{ padding:16px 18px; gap:14px }
+  .avi-picker{ grid-template-columns:repeat(5,1fr) }
+  .banner-picker{ grid-template-columns:repeat(3,1fr) }
+  .theme-picker{ grid-template-columns:repeat(2,1fr) }
+  .edit-input{ font-size:16px } /* prevent iOS zoom */
+
+  /* ── PROFILE MODAL ────────────────────────────────── */
+  .modal{ border-radius:20px }
+  .modal-body{ padding:0 16px 20px }
+  .modal-name{ font-size:19px }
+  .modal-stats{ gap:18px }
+
+  /* ── FRIENDS PAGE ─────────────────────────────────── */
+  .friends-grid-split{
+    grid-template-columns:1fr !important;
+  }
+  .chat-window-mobile{
+    position:fixed;inset:0;z-index:150;
+    border-radius:0 !important;
+  }
+
+  /* ── TABS ROW ─────────────────────────────────────── */
+  .tabs-row{ gap:2px; padding:3px }
+  .tab-btn{ font-size:12.5px; padding:7px 4px }
+
+  /* ── MISC ─────────────────────────────────────────── */
+  .disc-follow-btn{ padding:7px 12px; font-size:12px }
+  .comment-input{ font-size:16px } /* prevent iOS zoom */
+  .search-input{ font-size:16px } /* prevent iOS zoom */
+  .moon-interests{ gap:5px }
+  .moon-interest{ font-size:12px; padding:4px 10px }
+}
+
+/* hide mobile nav on desktop */
+@media(min-width:681px){
+  .mobile-nav{ display:none !important }
+}
+

@@ -1,84 +1,5 @@
-// ─── SEED USERS ──────────────────────────────────────────────────────────────
-export const SEED_USERS = [
-  {
-    id:"nova", name:"nova starling", handle:"@novastarling",
-    avatar:"🌸", avatarBg:"linear-gradient(135deg,#fce4ec,#f3e5f5)",
-    bannerBg:"linear-gradient(135deg,#f8bbd0,#ce93d8)",
-    bio:"making tiny digital gardens 🌱 soft things only. she/her ✨",
-    website:"novastarling.co",
-    interests:["🎨 art","🌿 plants","🎵 indie pop","✨ stickers","🌙 moon phases"],
-    mood:"☁️ dreamy", followers:842, following:391, isOnline:true,
-    profileTheme:"aurora", profileFont:"serif", profileColor:"#ce93d8",
-    badges:["🌟 early star","🎨 creator","💫 rising"],
-    aboutSections:[{title:"about me",text:"i make things. mostly art and sadness lol"},{title:"currently",text:"listening to mitski on repeat 🎵"}],
-    spotifyEmbed: null,
-  },
-  {
-    id:"clem", name:"clem fox", handle:"@clemfox",
-    avatar:"🦊", avatarBg:"linear-gradient(135deg,#fff8e1,#ffe0b2)",
-    bannerBg:"linear-gradient(135deg,#ffcc80,#ffab91)",
-    bio:"photographer 📷 bookworm 📚 coffee shop regular",
-    website:"clemfox.film",
-    interests:["📷 photography","☕ coffee","📚 books","🌅 sunsets"],
-    mood:"☕ cozy", followers:1204, following:520, isOnline:true,
-    profileTheme:"nebula", profileFont:"mono", profileColor:"#ffab91",
-    badges:["📷 photographer","⭐ verified","🔥 trending"],
-    aboutSections:[{title:"about me",text:"chasing golden hour forever"},{title:"currently",text:"reading: the secret history"}],
-    spotifyEmbed: null,
-  },
-  {
-    id:"rae", name:"rae bloom", handle:"@raebloom",
-    avatar:"🌻", avatarBg:"linear-gradient(135deg,#e8f5e9,#b2dfdb)",
-    bannerBg:"linear-gradient(135deg,#a5d6a7,#80cbc4)",
-    bio:"she/her 🌻 ceramics & cottagecore 🍄 slow living",
-    website:"",
-    interests:["🏺 ceramics","🍄 foraging","🌿 cottagecore","🎨 watercolor"],
-    mood:"🌿 soft", followers:673, following:289, isOnline:false,
-    profileTheme:"forest", profileFont:"handwritten", profileColor:"#80cbc4",
-    badges:["🌿 nature lover","🏺 artisan"],
-    aboutSections:[{title:"about me",text:"slow living advocate 🌿"},{title:"currently",text:"making a new glaze recipe"}],
-    spotifyEmbed: null,
-  },
-  {
-    id:"kit", name:"kit vela", handle:"@kitvela",
-    avatar:"🌙", avatarBg:"linear-gradient(135deg,#ede7f6,#d1c4e9)",
-    bannerBg:"linear-gradient(135deg,#b39ddb,#9fa8da)",
-    bio:"🌙 night owl. synth music & pixel art. cozy games forever",
-    website:"kitvela.itch.io",
-    interests:["🎮 games","🎹 synth","🌙 night","🖥️ pixel art"],
-    mood:"🌙 moody", followers:2110, following:840, isOnline:true,
-    profileTheme:"void", profileFont:"mono", profileColor:"#b39ddb",
-    badges:["🌙 night owl","🎮 gamer","💜 og member"],
-    aboutSections:[{title:"about me",text:"i make music and games sometimes"},{title:"currently",text:"composing at 2am as usual"}],
-    spotifyEmbed: null,
-  },
-  {
-    id:"pearl", name:"pearl misu", handle:"@pearlmisu",
-    avatar:"🐚", avatarBg:"linear-gradient(135deg,#fce4ec,#fff9c4)",
-    bannerBg:"linear-gradient(135deg,#f48fb1,#fff176)",
-    bio:"baker 🍰 vintage collector 🎀 soft pop girlie. she/they",
-    website:"",
-    interests:["🍰 baking","🎀 vintage","🌸 kawaii","💿 pop"],
-    mood:"🍰 sweet", followers:967, following:445, isOnline:true,
-    profileTheme:"candy", profileFont:"rounded", profileColor:"#f48fb1",
-    badges:["🍰 baker","🎀 fashionista","🌸 sweetie"],
-    aboutSections:[{title:"about me",text:"baking is my love language 🍓"},{title:"currently",text:"testing a new macaroon recipe"}],
-    spotifyEmbed: null,
-  },
-  {
-    id:"sol", name:"sol haven", handle:"@solhaven",
-    avatar:"🌤️", avatarBg:"linear-gradient(135deg,#e3f2fd,#b3e5fc)",
-    bannerBg:"linear-gradient(135deg,#81d4fa,#b3e5fc)",
-    bio:"cloud chaser ☁️ weather nerd 🌦️ morning person somehow",
-    website:"",
-    interests:["☁️ clouds","🌦️ weather","🌅 sunrise","📸 sky photos"],
-    mood:"☁️ drifting", followers:534, following:310, isOnline:false,
-    profileTheme:"sky", profileFont:"serif", profileColor:"#81d4fa",
-    badges:["☁️ cloud chaser","🌅 early bird"],
-    aboutSections:[{title:"about me",text:"professional cloud watcher ☁️"}],
-    spotifyEmbed: null,
-  },
-];
+// ─── NO SEED USERS — real users only ─────────────────────────────────────────
+export const SEED_USERS = [];
 
 // ─── MOODS ───────────────────────────────────────────────────────────────────
 export const MOODS = [
@@ -110,11 +31,11 @@ export const PROFILE_THEMES = {
 
 // ─── PROFILE FONTS ───────────────────────────────────────────────────────────
 export const PROFILE_FONTS = {
-  serif:       { name:"serif",       family:"'Georgia', serif",                          label:"Elegant ✦" },
-  sans:        { name:"sans",        family:"'Nunito', sans-serif",                      label:"Clean ○" },
-  mono:        { name:"mono",        family:"'Courier New', monospace",                  label:"Retro ▪" },
-  rounded:     { name:"rounded",     family:"'Nunito', sans-serif",                      label:"Soft ◦" },
-  handwritten: { name:"handwritten", family:"'Georgia', cursive",                        label:"Dreamy ☽" },
+  serif:       { name:"serif",       family:"'Georgia', serif",         label:"Elegant ✦" },
+  sans:        { name:"sans",        family:"'Nunito', sans-serif",      label:"Clean ○" },
+  mono:        { name:"mono",        family:"'Courier New', monospace",  label:"Retro ▪" },
+  rounded:     { name:"rounded",     family:"'Nunito', sans-serif",      label:"Soft ◦" },
+  handwritten: { name:"handwritten", family:"'Georgia', cursive",        label:"Dreamy ☽" },
 };
 
 // ─── AVATAR OPTIONS ───────────────────────────────────────────────────────────
@@ -158,24 +79,9 @@ export const BADGE_CATALOG = [
   "🌅 early bird","🎵 musician","📚 bookworm","🔮 mystic","🪐 space nerd",
 ];
 
-// ─── SEED POSTS ───────────────────────────────────────────────────────────────
-export const SEED_POSTS = [
-  { id:"p1", authorId:"clem",  body:"golden hour hit different today 🌅 sharing because it felt too good to keep",         media:null, mediaType:null, tags:["#photography","#goldenHour"], mood:{ label:"☀️ glowing", bg:"#fff8e1", color:"#f9a825" }, createdAt:Date.now()-3*60000,      likes:47, comments:[], boosts:12 },
-  { id:"p2", authorId:"pearl", body:"tried a new lavender earl grey shortbread recipe and honestly?? life changing 🍋",    media:null, mediaType:null, tags:["#baking","#cottagecore"],    mood:{ label:"🍰 content", bg:"#fce4ec", color:"#c2185b" }, createdAt:Date.now()-12*60000,     likes:83, comments:[], boosts:29 },
-  { id:"p3", authorId:"nova",  body:"reminder that you're allowed to rest. log off. touch grass. your little digital garden can wait 🌱", media:null, mediaType:null, tags:["#softLife","#cloudMind"], mood:{ label:"🌸 gentle", bg:"#ede7f6", color:"#6a1b9a" }, createdAt:Date.now()-31*60000, likes:201, comments:[], boosts:88 },
-  { id:"p4", authorId:"kit",   body:"working on this ambient synth piece at 2am and everything feels possible ☁️ the void is productive tonight", media:null, mediaType:null, tags:["#music","#nightOwl","#sp4cie"], mood:{ label:"🌙 wired", bg:"#ede7f6", color:"#512da8" }, createdAt:Date.now()-60*60000,  likes:132, comments:[], boosts:41 },
-  { id:"p5", authorId:"rae",   body:"my ceramics class made little pinch pots today. mine looks like a tiny nervous frog and i love him 🐸", media:null, mediaType:null, tags:["#ceramics","#art"],          mood:{ label:"🏺 creative",bg:"#e8f5e9", color:"#388e3c" }, createdAt:Date.now()-2*3600000, likes:95, comments:[], boosts:22 },
-  { id:"p6", authorId:"sol",   body:"the clouds this morning were giving main character energy ☁️✨ woke up at 6am just for this sky", media:null, mediaType:null, tags:["#cloudWatching","#sp4cie"],  mood:{ label:"🌤️ airy",   bg:"#e3f2fd", color:"#1565c0" }, createdAt:Date.now()-3*3600000, likes:68, comments:[], boosts:18 },
-];
-
-// ─── SEED CHAT ────────────────────────────────────────────────────────────────
-export const SEED_CHAT = [
-  { id:"c1", userId:"nova",  text:"omg did anyone see the cloud formations today?? 🌤️", time:"10:24am" },
-  { id:"c2", userId:"pearl", text:"YES omg looked like cotton candy 🍬☁️",               time:"10:25am" },
-  { id:"c3", userId:"kit",   text:"i missed it 😭 someone share photos pls",              time:"10:26am" },
-  { id:"c4", userId:"sol",   text:"posting to my moon right now hold on ☁️",              time:"10:27am" },
-  { id:"c5", userId:"clem",  text:"you all are so cute lol 🌸",                           time:"10:28am" },
-];
+// ─── EMPTY SEEDS (no bots) ────────────────────────────────────────────────────
+export const SEED_POSTS = [];
+export const SEED_CHAT  = [];
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 export function formatTime(ts) {
@@ -190,9 +96,5 @@ export function nowTime() {
   return new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
 }
 
-export const CHAT_AUTO_REPLIES = [
-  "omg yes!! ☁️","same energy 🌸","wait really?? 👀","hehe 🍄",
-  "yesss 💕","sending love ✨","cloud brain activated ☁️✨","this is so real 🌿",
-  "🫧🫧🫧","literally same","i felt that","no thoughts, head empty ☁️",
-  "ok but why is this so true","besties for real","☁️ vibes","mood 🌙",
-];
+// kept for cloud nine typing feel — no bots use this anymore
+export const CHAT_AUTO_REPLIES = [];

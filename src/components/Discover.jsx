@@ -14,7 +14,6 @@ export default function Discover() {
     return match;
   });
 
-  // for each user, count their posts visible in feed
   function postCount(uid) { return posts.filter(p => p.authorId === uid).length; }
 
   return (
@@ -23,7 +22,8 @@ export default function Discover() {
         <div className="section-title">discover 🌌</div>
       </div>
 
-      <input className="search-input" placeholder="🌌 search by name, handle, or vibe..."
+      <input className="search-input"
+        placeholder="🌌 search by name, handle, or vibe..."
         value={search} onChange={e => setSearch(e.target.value)} />
 
       <div className="tabs-row">
@@ -38,39 +38,42 @@ export default function Discover() {
         ))}
       </div>
 
-      {filtered.length === 0 ? (
-        <div className="empty-state"><div className="empty-icon">🌌</div>no orbits found matching that vibe</div>
+      {users.length === 0 ? (
+        <div className="empty-state">
+          <div className="empty-icon">🌌</div>
+          <div style={{ fontWeight:700, marginBottom:8 }}>no one else here yet</div>
+          <div style={{ fontSize:13.5, color:"var(--muted)", fontWeight:500 }}>
+            invite your friends to join sp4cie and they'll show up here ✦
+          </div>
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="empty-state">
+          <div className="empty-icon">🌌</div>
+          no orbits found matching that vibe
+        </div>
       ) : (
         <div className="discover-grid">
           {filtered.map(u => (
             <div key={u.id} className="disc-card" onClick={() => setProfileModal(u)}>
-              <div className="disc-banner" style={{ background: u.bannerBg }} />
+              <div className="disc-banner" style={{ background:u.bannerBg }} />
               <div className="disc-body">
-                <div className="disc-avi" style={{ background: u.avatarBg }}>{u.avatar}</div>
+                <div className="disc-avi" style={{ background:u.avatarBg }}>{u.avatar}</div>
                 <div className="disc-name">{u.name}</div>
                 <div className="disc-handle">{u.handle}</div>
-                <div className="disc-bio">{u.bio.slice(0, 70)}{u.bio.length > 70 ? "…" : ""}</div>
-
+                <div className="disc-bio">{u.bio.slice(0,70)}{u.bio.length>70?"…":""}</div>
                 <div style={{ display:"flex", gap:14, justifyContent:"center", marginBottom:10 }}>
                   <div style={{ textAlign:"center" }}>
-                    <div style={{ fontWeight:800, fontSize:13.5, color:"var(--text)" }}>{u.followers + (following.has(u.id) ? 1 : 0)}</div>
-                    <div style={{ fontSize:10, color:"var(--muted)", fontWeight:700, textTransform:"uppercase" }}>followers</div>
+                    <div style={{ fontWeight:800, fontSize:13.5, color:"var(--text)" }}>{u.followers+(following.has(u.id)?1:0)}</div>
+                    <div style={{ fontSize:10, color:"var(--muted)", fontWeight:700, textTransform:"uppercase" }}>stars</div>
                   </div>
                   <div style={{ textAlign:"center" }}>
                     <div style={{ fontWeight:800, fontSize:13.5, color:"var(--text)" }}>{postCount(u.id)}</div>
                     <div style={{ fontSize:10, color:"var(--muted)", fontWeight:700, textTransform:"uppercase" }}>posts</div>
                   </div>
-                  <div style={{ textAlign:"center" }}>
-                    <div style={{ fontWeight:800, fontSize:13.5, color:"var(--text)" }}>{u.mood}</div>
-                  </div>
                 </div>
-
-                <div style={{ display:"flex", flexWrap:"wrap", gap:4, justifyContent:"center", marginBottom:10 }}>
-                  {u.badges?.slice(0,2).map((b,i) => (
-                    <span key={i} style={{ fontSize:11, fontWeight:700, padding:"3px 8px", borderRadius:20, background:"rgba(192,132,252,.1)", color:"var(--accent)", border:"1px solid rgba(192,132,252,.2)" }}>{b}</span>
-                  ))}
-                </div>
-
+                {u.badges?.slice(0,2).map((b,i) => (
+                  <span key={i} style={{ fontSize:11, fontWeight:700, padding:"3px 8px", borderRadius:20, background:"rgba(192,132,252,.1)", color:"var(--accent)", border:"1px solid rgba(192,132,252,.2)", display:"inline-block", margin:"0 3px 6px" }}>{b}</span>
+                ))}
                 <button className="disc-follow-btn"
                   style={following.has(u.id)
                     ? { background:"rgba(255,255,255,.08)", color:"var(--text2)" }

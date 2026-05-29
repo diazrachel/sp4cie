@@ -16,8 +16,16 @@ import ProfileModal from "./components/ProfileModal";
 import Starfield    from "./components/Starfield";
 import "./styles/global.css";
 
+const NAV_ITEMS = [
+  { key:"home",     icon:"✦",  label:"feed"    },
+  { key:"discover", icon:"🌌", label:"discover"},
+  { key:"chat",     icon:"☁️", label:"cloud 9" },
+  { key:"friends",  icon:"🌟", label:"friends" },
+  { key:"moon",     icon:"🌙", label:"my moon" },
+];
+
 function MainApp() {
-  const { tab, profileModal, setProfileModal } = useContext(AppContext);
+  const { tab, setTab, profileModal, setProfileModal, myFriendCount } = useContext(AppContext);
   const { logout } = useContext(AuthContext);
 
   return (
@@ -27,6 +35,7 @@ function MainApp() {
         {[1,2,3,4].map(i => <div key={i} className={`cloud-drift cd${i}`} />)}
       </div>
 
+      {/* log out — top right */}
       <button onClick={logout} style={{
         position:"fixed", top:14, right:18, zIndex:200,
         padding:"6px 14px", borderRadius:10,
@@ -42,14 +51,37 @@ function MainApp() {
       <div className="app-layout">
         <Sidebar />
         <main className="main-content">
-          {tab === "home"    && <Feed />}
-          {tab === "discover"&& <Discover />}
-          {tab === "chat"    && <CloudNine />}
-          {tab === "friends" && <FriendsPage />}
-          {tab === "moon"    && <MyMoon />}
+          {tab === "home"     && <Feed />}
+          {tab === "discover" && <Discover />}
+          {tab === "chat"     && <CloudNine />}
+          {tab === "friends"  && <FriendsPage />}
+          {tab === "moon"     && <MyMoon />}
         </main>
         <RightPanel />
       </div>
+
+      {/* ── MOBILE BOTTOM NAV ── */}
+      <nav className="mobile-nav">
+        {NAV_ITEMS.map(n => (
+          <button
+            key={n.key}
+            className={`mobile-nav-btn ${tab === n.key ? "active" : ""}`}
+            onClick={() => setTab(n.key)}
+          >
+            <span className="nav-icon">{n.icon}</span>
+            {n.label}
+            {n.key === "friends" && myFriendCount > 0 && (
+              <span style={{
+                position:"absolute", top:6, right:"calc(50% - 16px)",
+                background:"linear-gradient(135deg,#c084fc,#f472b6)",
+                color:"white", fontSize:9, fontWeight:800,
+                padding:"1px 5px", borderRadius:20,
+                boxShadow:"0 1px 6px rgba(192,132,252,.5)",
+              }}>{myFriendCount}</span>
+            )}
+          </button>
+        ))}
+      </nav>
 
       {profileModal && <ProfileModal user={profileModal} onClose={() => setProfileModal(null)} />}
     </div>

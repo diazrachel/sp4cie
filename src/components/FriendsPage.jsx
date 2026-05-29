@@ -265,7 +265,7 @@ export default function FriendsPage() {
         ))}
       </div>
 
-      <div style={{ display:"grid", gridTemplateColumns: activeChat ? "1fr 1fr" : "1fr", gap:16 }}>
+      <div className="friends-grid-split" style={{ display:"grid", gridTemplateColumns: activeChat ? "1fr 1fr" : "1fr", gap:16 }}>
 
         {/* LEFT: people list + chats */}
         <div>
@@ -385,7 +385,9 @@ export default function FriendsPage() {
 
         {/* RIGHT: active chat */}
         {activeChat && (
-          <ChatWindow chat={activeChat} onClose={() => setActiveFriendChat(null)} />
+          <div className="chat-window-mobile" style={{ height:"100%" }}>
+            <ChatWindow chat={activeChat} onClose={() => setActiveFriendChat(null)} />
+          </div>
         )}
       </div>
 
