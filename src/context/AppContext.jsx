@@ -166,21 +166,27 @@ export function AppProvider({ children }) {
   const addPost = useCallback(async ({ body, media, mediaType, audioFile, mood }) => {
     if (!userId) return
     let mediaUrl = null, audioUrl = null
-    if (media) {
-      const blob = await fetch(media).then(r => r.blob())
-      const ext  = mediaType === 'video' ? 'mp4' : 'jpg'
-      mediaUrl   = await uploadFile(blob, 'sp4cie-media', `${userId}/${Date.now()}.${ext}`)
+    try {
+      if (media) {
+        const blob = await fetch(media).then(r => r.blob())
+        const ext  = mediaType === 'video' ? 'mp4' : 'jpg'
+        mediaUrl   = await uploadFile(blob, 'sp4cie-media', `${userId}/${Date.now()}.${ext}`)
+      }
+      if (audioFile) {
+        audioUrl = await uploadFile(audioFile, 'sp4cie-media', `${userId}/audio_${Date.now()}.mp3`)
+      }
+    } catch(e) {
+      console.warn('media upload failed, posting without media', e)
     }
-    if (audioFile) {
-      audioUrl = await uploadFile(audioFile, 'sp4cie-media', `${userId}/audio_${Date.now()}.mp3`)
-    }
-    await supabase.from('posts').insert({
+    const { error } = await supabase.from('posts').insert({
       author_id: userId, body: body||'',
-      media_url: mediaUrl, media_type: media ? mediaType : null,
+      media_url: mediaUrl, media_type: mediaUrl ? mediaType : null,
       audio_url: audioUrl,
       tags: (body||'').match(/#\w+/g)||[],
       mood_label: mood?.label||null, mood_bg: mood?.bg||null, mood_color: mood?.color||null,
     })
+    if (error) console.error('post insert error:', error)
+    else await loadPosts()
   }, [userId])
 
   const toggleLike = useCallback(async postId => {
@@ -235,6 +241,7 @@ export function AppProvider({ children }) {
     if (!userId) return
     const existing = friendChats.find(c => c.isDM && c.members.includes(friendId))
     if (existing) { setActiveFriendChat(existing.id); setTab('friends'); return }
+    setTab('friends')
     const { data: chat } = await supabase.from('friend_chats').insert({is_dm:true,name:null}).select().single()
     if (!chat) return
     await supabase.from('friend_chat_members').insert([

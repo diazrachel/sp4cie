@@ -5,12 +5,13 @@ import { useState, useRef, useEffect } from 'react'
 function CloudMessage({ msg, index, total, myProfile, getUserById }) {
   const isMe   = msg.userId === myProfile?.id
   const user   = isMe ? myProfile : getUserById(msg.userId)
-  const age    = total - index // how old (0 = newest)
-  // older messages fade out more
-  const opacity = Math.max(0.15, 1 - age * 0.08)
-  // random horizontal offset so messages drift to different positions
-  const drift   = ((index * 47) % 60) - 30 // -30 to +30px
-  const delay   = (index % 5) * 0.3
+  const age    = total - index // 0 = newest, higher = older
+  // newest 3 messages are fully visible, then fade progressively
+  const opacity = age < 3 ? 1 : Math.max(0.1, 1 - (age - 2) * 0.1)
+  // slight drift sideways based on position
+  const drift   = ((index * 47) % 40) - 20
+  // blur only very old messages
+  const blur    = age > 10 ? `blur(${Math.min(3, (age-10)*0.3)}px)` : 'none'
 
   return (
     <div
@@ -18,9 +19,9 @@ function CloudMessage({ msg, index, total, myProfile, getUserById }) {
       style={{
         opacity,
         transform: `translateX(${isMe ? -drift : drift}px)`,
-        transition: 'opacity 2s ease, transform 1s ease',
-        animation: `cloudFloat 0.6s cubic-bezier(.34,1.56,.64,1) ${delay}s both`,
-        filter: age > 8 ? `blur(${(age-8)*0.4}px)` : 'none',
+        transition: 'opacity 3s ease, transform 2s ease',
+        animation: age === 0 ? `cloudFloat 0.6s cubic-bezier(.34,1.56,.64,1) both` : 'none',
+        filter: blur,
       }}
     >
       <div className="cn-avi" style={{ background:user?.avatarBg||'var(--cloud-soft)', overflow:'hidden' }}>

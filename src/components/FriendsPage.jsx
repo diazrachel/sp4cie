@@ -337,7 +337,7 @@ export default function FriendsPage() {
               ) : (
                 <div style={{ display:"flex", flexDirection:"column", gap:9 }}>
                   {filterUsers(friendList).map(u => (
-                    <FriendCard key={u.id} u={u} onChat={() => { openFriendDM(u.id); setActiveFriendChat(friendChats.find(c=>c.isDM&&c.members.includes(u.id))?.id || `dm_${u.id}_new`); }}
+                    <FriendCard key={u.id} u={u} onChat={() => openFriendDM(u.id)}
                       onProfile={() => setProfileModal(u)} posts={posts} />
                   ))}
                 </div>

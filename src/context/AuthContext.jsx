@@ -3,8 +3,7 @@ import { supabase } from '../lib/supabase.js'
 
 export const AuthContext = createContext()
 
-// We use email internally but hide it from users — they only see username
-// Format: username@sp4cie.app (fake email so Supabase auth works without real email)
+// Internal fake email so Supabase auth works without real emails
 function usernameToEmail(username) {
   return `${username.toLowerCase().trim()}@sp4cie.app`
 }
@@ -36,36 +35,36 @@ export function AuthProvider({ children }) {
 
   async function signup({ username, password }) {
     const uname = username.toLowerCase().trim()
-    // check username taken
-    const { data: existing } = await supabase.from('profiles').select('id').eq('username', uname).maybeSingle()
-    if (existing) return { error: 'That handle is already taken 🌙' }
     if (uname.length < 3) return { error: 'Username must be at least 3 characters' }
     if (/[^a-zA-Z0-9_.]/.test(uname)) return { error: 'Letters, numbers, _ and . only' }
     if (password.length < 6) return { error: 'Password must be at least 6 characters' }
-
+    // check username taken
+    const { data: existing } = await supabase.from('profiles').select('id').eq('username', uname).maybeSingle()
+    if (existing) return { error: 'That handle is already taken 🌙' }
     const email = usernameToEmail(uname)
     const { error } = await supabase.auth.signUp({
       email, password,
-      options: { data: { username: uname }, emailRedirectTo: null }
+      options: { data: { username: uname } }
     })
     if (error) return { error: error.message }
     return { success: true }
   }
 
   async function login({ username, password }) {
-    const email = usernameToEmail(username.toLowerCase().trim())
+    const uname = username.toLowerCase().trim()
+    const email = usernameToEmail(uname)
     const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) return { error: "Wrong username or password 🌙" }
+    if (error) return { error: 'Wrong username or password 🌙' }
     return { success: true }
   }
 
   async function completeSetup(profileData) {
     const userId = session?.user?.id
     if (!userId) return { error: 'Not logged in' }
-    const username = session.user.user_metadata?.username || `star_${Date.now()}`
+    const username = profileData.username || session.user.user_metadata?.username || `star_${Date.now()}`
     const { error } = await supabase.from('profiles').insert({
       id: userId,
-      username,
+      username: username.toLowerCase().trim(),
       name: profileData.name || username,
       avatar: profileData.avatar || '🌙',
       avatar_bg: profileData.avatarBg || 'linear-gradient(135deg,#ede7f6,#d1c4e9)',
