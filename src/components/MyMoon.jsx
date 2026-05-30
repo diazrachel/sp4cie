@@ -32,7 +32,8 @@ function MusicPlayer({ song }) {
 }
 
 export default function MyMoon() {
-  const { myProfile, updateMyProfile, posts, myStarCount, myFollowingCount, myFriendCount } = useApp();
+  const { myProfile, posts, myStarCount, myFollowingCount, myFriendCount } = useApp()
+  const { updateProfile: updateMyProfile } = useAuth();
   const [editing, setEditing]     = useState(false);
   const [activeTab, setActiveTab] = useState("posts");
 
