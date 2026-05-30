@@ -8,12 +8,18 @@ import { supabase } from '../lib/supabase.js'
 
 function MusicPlayer({ url, name }) {
   const [playing, setPlaying] = useState(false)
+  const [volume, setVolume]   = useState(0.5)
   const audioRef = useRef(null)
   if (!url) return null
   function toggle() {
     if (!audioRef.current) return
     if (playing) { audioRef.current.pause(); setPlaying(false) }
-    else { audioRef.current.play(); setPlaying(true) }
+    else { audioRef.current.volume = volume; audioRef.current.play(); setPlaying(true) }
+  }
+  function changeVolume(e) {
+    const v = parseFloat(e.target.value)
+    setVolume(v)
+    if (audioRef.current) audioRef.current.volume = v
   }
   return (
     <div className="music-player">
@@ -23,6 +29,8 @@ function MusicPlayer({ url, name }) {
         <div className="music-title">{name || 'profile song'}</div>
         <div className="music-artist">tap to {playing?'pause':'play'}</div>
       </div>
+      <input type="range" min="0" max="1" step="0.05" value={volume} onChange={changeVolume}
+        style={{ width:50, accentColor:'var(--accent)', cursor:'pointer' }} title="volume" />
       <button className="music-play-btn" onClick={toggle}>{playing?'⏸':'▶'}</button>
     </div>
   )

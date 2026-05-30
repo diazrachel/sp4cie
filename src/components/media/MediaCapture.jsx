@@ -13,7 +13,14 @@ export default function MediaCapture({ onCapture, onClose }) {
   const fileRef    = useRef(null)
   const isMobile   = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)
 
-  useEffect(() => () => stopStream(), [])
+  useEffect(() => {
+    // lock background scroll when camera is open
+    document.body.style.overflow = 'hidden'
+    return () => {
+      stopStream()
+      document.body.style.overflow = ''
+    }
+  }, [])
 
   function stopStream() {
     stream?.getTracks().forEach(t => t.stop())
@@ -93,7 +100,7 @@ export default function MediaCapture({ onCapture, onClose }) {
 
   return (
     <div style={{
-      position:'fixed', inset:0, zIndex:300, background:'#000',
+      position:'fixed', inset:0, zIndex:9999, background:'#000',
       display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
     }}>
       {/* close */}
@@ -123,7 +130,7 @@ export default function MediaCapture({ onCapture, onClose }) {
       {/* CAMERA screen */}
       {mode === 'camera' && (
         <div style={{ width:'100%', height:'100%', position:'relative', display:'flex', alignItems:'center', justifyContent:'center' }}>
-          <video ref={videoRef} style={{ width:'100%', height:'100%', objectFit:'cover' }} playsInline muted />
+          <video ref={videoRef} style={{ width:'100%', height:'100%', objectFit:'cover', transform:'none' }} playsInline muted />
 
           {/* flip camera */}
           <button onClick={flipCamera} style={{ position:'absolute', top:16, right:16, background:'rgba(0,0,0,.5)', border:'none', borderRadius:'50%', width:44, height:44, fontSize:20, cursor:'pointer', color:'white' }}>🔄</button>
@@ -156,8 +163,8 @@ export default function MediaCapture({ onCapture, onClose }) {
       {mode === 'preview' && captured && (
         <div style={{ width:'100%', height:'100%', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', background:'#111' }}>
           {captured.type === 'image'
-            ? <img src={captured.url} style={{ maxWidth:'100%', maxHeight:'75vh', objectFit:'contain', borderRadius:12 }} alt="preview" />
-            : <video src={captured.url} controls style={{ maxWidth:'100%', maxHeight:'75vh', borderRadius:12 }} />}
+            ? <img src={captured.url} style={{ maxWidth:'100%', maxHeight:'75vh', objectFit:'contain', borderRadius:12, transform:'none' }} alt="preview" />
+            : <video src={captured.url} controls style={{ maxWidth:'100%', maxHeight:'75vh', borderRadius:12, transform:'none' }} />}
           <div style={{ display:'flex', gap:14, marginTop:24 }}>
             <button onClick={retake} style={{ padding:'11px 26px', borderRadius:12, border:'1px solid rgba(255,255,255,.2)', background:'transparent', color:'white', fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:15, cursor:'pointer' }}>
               retake

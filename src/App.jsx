@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { AuthContext, AuthProvider } from './context/AuthContext.jsx'
 import { AppContext, AppProvider } from './context/AppContext.jsx'
 import Landing      from './components/auth/Landing.jsx'
@@ -13,6 +13,7 @@ import FriendsPage  from './components/FriendsPage.jsx'
 import MyMoon       from './components/MyMoon.jsx'
 import RightPanel   from './components/RightPanel.jsx'
 import ProfileModal from './components/ProfileModal.jsx'
+import SettingsModal from './components/SettingsModal.jsx'
 import Starfield    from './components/Starfield.jsx'
 import './styles/global.css'
 
@@ -26,14 +27,30 @@ const NAV = [
 
 function MainApp() {
   const { tab, setTab, profileModal, setProfileModal, myFriendCount } = useContext(AppContext)
-  const { logout } = useContext(AuthContext)
+  const [showSettings, setShowSettings] = useState(false)
+
   return (
     <div className="app-shell">
       <Starfield />
       <div className="cloud-layer" aria-hidden>{[1,2,3,4].map(i=><div key={i} className={`cloud-drift cd${i}`}/>)}</div>
-      <button onClick={logout} style={{ position:'fixed', top:14, right:18, zIndex:200, padding:'6px 14px', borderRadius:10, border:'1px solid rgba(255,255,255,.12)', background:'rgba(12,10,40,.7)', backdropFilter:'blur(8px)', fontFamily:"'Space Grotesk',sans-serif", fontSize:12.5, fontWeight:700, color:'var(--muted)', cursor:'pointer' }}>
-        log out ✦
-      </button>
+
+      {/* gear icon — top right, replaces logout button */}
+      <button
+        onClick={() => setShowSettings(true)}
+        title="settings"
+        style={{
+          position:'fixed', top:14, right:18, zIndex:200,
+          width:38, height:38, borderRadius:'50%',
+          border:'1px solid rgba(255,255,255,.12)',
+          background:'rgba(12,10,40,.75)', backdropFilter:'blur(8px)',
+          color:'var(--muted)', cursor:'pointer', fontSize:18,
+          display:'flex', alignItems:'center', justifyContent:'center',
+          transition:'all .15s',
+        }}
+        onMouseEnter={e=>{e.currentTarget.style.color='var(--text)';e.currentTarget.style.borderColor='rgba(192,132,252,.4)'}}
+        onMouseLeave={e=>{e.currentTarget.style.color='var(--muted)';e.currentTarget.style.borderColor='rgba(255,255,255,.12)'}}
+      >⚙️</button>
+
       <div className="app-layout">
         <Sidebar />
         <main className="main-content">
@@ -45,22 +62,37 @@ function MainApp() {
         </main>
         <RightPanel />
       </div>
+
+      {/* mobile bottom nav */}
       <nav className="mobile-nav">
         {NAV.map(n=>(
           <button key={n.key} className={`mobile-nav-btn ${tab===n.key?'active':''}`} onClick={()=>setTab(n.key)}>
             <span className="nav-icon">{n.icon}</span>{n.label}
-            {n.key==='friends'&&myFriendCount>0&&<span style={{ position:'absolute', top:6, right:'calc(50% - 16px)', background:'linear-gradient(135deg,#c084fc,#f472b6)', color:'white', fontSize:9, fontWeight:800, padding:'1px 5px', borderRadius:20 }}>{myFriendCount}</span>}
+            {n.key==='friends'&&myFriendCount>0&&(
+              <span style={{ position:'absolute', top:6, right:'calc(50% - 16px)', background:'linear-gradient(135deg,#c084fc,#f472b6)', color:'white', fontSize:9, fontWeight:800, padding:'1px 5px', borderRadius:20 }}>{myFriendCount}</span>
+            )}
           </button>
         ))}
+        {/* settings gear in bottom nav for mobile */}
+        <button className="mobile-nav-btn" onClick={()=>setShowSettings(true)}>
+          <span className="nav-icon">⚙️</span>settings
+        </button>
       </nav>
-      {profileModal&&<ProfileModal user={profileModal} onClose={()=>setProfileModal(null)}/>}
+
+      {profileModal  && <ProfileModal user={profileModal} onClose={()=>setProfileModal(null)}/>}
+      {showSettings  && <SettingsModal onClose={()=>setShowSettings(false)}/>}
     </div>
   )
 }
 
 function AppRouter() {
   const { step } = useContext(AuthContext)
-  if (step==='loading') return <div style={{ minHeight:'100vh', background:'#07071a', display:'flex', alignItems:'center', justifyContent:'center', color:'#c084fc', fontFamily:"'Space Grotesk',sans-serif", fontSize:18 }}>✦ loading sp4cie...</div>
+  if (step==='loading') return (
+    <div style={{ minHeight:'100vh', background:'#07071a', display:'flex', alignItems:'center', justifyContent:'center', color:'#c084fc', fontFamily:"'Space Grotesk',sans-serif", fontSize:18, flexDirection:'column', gap:12 }}>
+      <div style={{ fontSize:32, animation:'spin 2s linear infinite' }}>✦</div>
+      loading sp4cie...
+    </div>
+  )
   if (step==='landing') return <Landing/>
   if (step==='signup')  return <Signup/>
   if (step==='login')   return <Login/>
