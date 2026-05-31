@@ -15,8 +15,13 @@ export default function ProfileSetup() {
   function toggleInterest(i) {
     setForm(f=>({...f,interests:f.interests.includes(i)?f.interests.filter(x=>x!==i):[...f.interests,i]}))
   }
+  const [finishing, setFinishing] = useState(false)
+  const [finishErr, setFinishErr] = useState('')
+
   async function finish() {
-    await completeSetup({
+    setFinishing(true)
+    setFinishErr('')
+    const res = await completeSetup({
       username,
       name: username,
       avatar: form.avatar,
@@ -29,6 +34,8 @@ export default function ProfileSetup() {
       profileFont: 'sans',
       aboutSections: [{ title:'about me', text: form.bio || 'new to sp4cie ✦' }],
     })
+    setFinishing(false)
+    if (res?.error) setFinishErr(res.error)
   }
   const themeKeys = Object.keys(PROFILE_THEMES).slice(0,6)
   return (
@@ -74,7 +81,12 @@ export default function ProfileSetup() {
             <div className="welcome-avi" style={{background:PROFILE_THEMES[form.profileTheme]?.bg||'#1a1040'}}>{form.avatar}</div>
             <div className="welcome-title">hi, {username}! 🌙</div>
             <div className="welcome-text">your moon is ready to orbit.<br/>float in and say hi to the cosmos ✦✨</div>
-            <div className="setup-nav"><button className="setup-back" onClick={()=>setStep(1)}>← back</button><button className="setup-next" onClick={finish}>enter sp4cie 🌙 →</button></div>
+            <div className="setup-nav"><button className="setup-back" onClick={()=>setStep(1)}>← back</button><>
+                {finishErr && <div style={{ color:'#fb7185', fontSize:13, fontWeight:700, textAlign:'center', marginBottom:8 }}>{finishErr}</div>}
+                <button className="setup-next" onClick={finish} disabled={finishing}>
+                  {finishing ? 'launching... 🌙' : 'enter sp4cie 🌙 →'}
+                </button>
+              </></div>
           </div>
         )}
       </div>

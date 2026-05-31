@@ -1,20 +1,21 @@
 import { useContext, useState } from 'react'
 import { AuthContext, AuthProvider } from './context/AuthContext.jsx'
 import { AppContext, AppProvider } from './context/AppContext.jsx'
-import Landing      from './components/auth/Landing.jsx'
-import Signup       from './components/auth/Signup.jsx'
-import Login        from './components/auth/Login.jsx'
-import ProfileSetup from './components/auth/ProfileSetup.jsx'
-import Sidebar      from './components/Sidebar.jsx'
-import Feed         from './components/Feed.jsx'
-import Discover     from './components/Discover.jsx'
-import CloudNine    from './components/CloudNine.jsx'
-import FriendsPage  from './components/FriendsPage.jsx'
-import MyMoon       from './components/MyMoon.jsx'
-import RightPanel   from './components/RightPanel.jsx'
-import ProfileModal from './components/ProfileModal.jsx'
+import Landing       from './components/auth/Landing.jsx'
+import Signup        from './components/auth/Signup.jsx'
+import Login         from './components/auth/Login.jsx'
+import ProfileSetup  from './components/auth/ProfileSetup.jsx'
+import Sidebar       from './components/Sidebar.jsx'
+import Feed          from './components/Feed.jsx'
+import Discover      from './components/Discover.jsx'
+import CloudNine     from './components/CloudNine.jsx'
+import FriendsPage   from './components/FriendsPage.jsx'
+import MyMoon        from './components/MyMoon.jsx'
+import RightPanel    from './components/RightPanel.jsx'
+import ProfileModal  from './components/ProfileModal.jsx'
 import SettingsModal from './components/SettingsModal.jsx'
-import Starfield    from './components/Starfield.jsx'
+import FloatingChat  from './components/FloatingChat.jsx'
+import Starfield     from './components/Starfield.jsx'
 import './styles/global.css'
 
 const NAV = [
@@ -26,30 +27,37 @@ const NAV = [
 ]
 
 function MainApp() {
-  const { tab, setTab, profileModal, setProfileModal, myFriendCount } = useContext(AppContext)
-  const [showSettings, setShowSettings] = useState(false)
+  const { tab, setTab, profileModal, setProfileModal, myFriendCount, activeFriendChat, setActiveFriendChat, openFriendDM } = useContext(AppContext)
+  const [showSettings, setShowSettings]     = useState(false)
+  const [floatingChatId, setFloatingChatId] = useState(null)
+
+  // expose openFloatingChat so RightPanel + FriendsPage can use it
+  function openFloatingChat(userId) {
+    openFriendDM(userId).then?.(() => {})
+    // after DM is opened, activeFriendChat will be set — we mirror it to floating
+    setFloatingChatId('pending_' + userId)
+  }
+
+  // sync floating chat when activeFriendChat changes
+  // (openFriendDM sets activeFriendChat after creating the DM)
+  useState(() => {
+    if (activeFriendChat && floatingChatId?.startsWith('pending_')) {
+      setFloatingChatId(activeFriendChat)
+    }
+  })
 
   return (
     <div className="app-shell">
       <Starfield />
       <div className="cloud-layer" aria-hidden>{[1,2,3,4].map(i=><div key={i} className={`cloud-drift cd${i}`}/>)}</div>
 
-      {/* gear icon — top right, replaces logout button */}
-      <button
-        onClick={() => setShowSettings(true)}
-        title="settings"
-        style={{
-          position:'fixed', top:14, right:18, zIndex:200,
-          width:38, height:38, borderRadius:'50%',
-          border:'1px solid rgba(255,255,255,.12)',
-          background:'rgba(12,10,40,.75)', backdropFilter:'blur(8px)',
-          color:'var(--muted)', cursor:'pointer', fontSize:18,
-          display:'flex', alignItems:'center', justifyContent:'center',
-          transition:'all .15s',
-        }}
+      {/* settings gear */}
+      <button onClick={()=>setShowSettings(true)} title="settings"
+        style={{ position:'fixed', top:14, right:18, zIndex:200, width:38, height:38, borderRadius:'50%', border:'1px solid rgba(255,255,255,.12)', background:'rgba(12,10,40,.75)', backdropFilter:'blur(8px)', color:'var(--muted)', cursor:'pointer', fontSize:18, display:'flex', alignItems:'center', justifyContent:'center', transition:'all .15s' }}
         onMouseEnter={e=>{e.currentTarget.style.color='var(--text)';e.currentTarget.style.borderColor='rgba(192,132,252,.4)'}}
-        onMouseLeave={e=>{e.currentTarget.style.color='var(--muted)';e.currentTarget.style.borderColor='rgba(255,255,255,.12)'}}
-      >⚙️</button>
+        onMouseLeave={e=>{e.currentTarget.style.color='var(--muted)';e.currentTarget.style.borderColor='rgba(255,255,255,.12)'}}>
+        ⚙️
+      </button>
 
       <div className="app-layout">
         <Sidebar />
@@ -57,10 +65,10 @@ function MainApp() {
           {tab==='home'    &&<Feed/>}
           {tab==='discover'&&<Discover/>}
           {tab==='chat'    &&<CloudNine/>}
-          {tab==='friends' &&<FriendsPage/>}
+          {tab==='friends' &&<FriendsPage onOpenChat={id=>{openFriendDM(id)}}/>}
           {tab==='moon'    &&<MyMoon/>}
         </main>
-        <RightPanel />
+        <RightPanel onOpenChat={id=>{openFriendDM(id)}}/>
       </div>
 
       {/* mobile bottom nav */}
@@ -73,11 +81,18 @@ function MainApp() {
             )}
           </button>
         ))}
-        {/* settings gear in bottom nav for mobile */}
         <button className="mobile-nav-btn" onClick={()=>setShowSettings(true)}>
           <span className="nav-icon">⚙️</span>settings
         </button>
       </nav>
+
+      {/* floating chat bubble */}
+      {activeFriendChat && (
+        <FloatingChat
+          chatId={activeFriendChat}
+          onClose={() => setActiveFriendChat(null)}
+        />
+      )}
 
       {profileModal  && <ProfileModal user={profileModal} onClose={()=>setProfileModal(null)}/>}
       {showSettings  && <SettingsModal onClose={()=>setShowSettings(false)}/>}
